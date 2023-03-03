@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace의 이름은 Mapper인터페이스의 이름과 동일하게 작성한다... -->
+
+
+<mapper namespace="toystory.common.member.mapper.MemberMapper">
+
+
+	<!-- 회원가입 -->
+	<insert id="insertMember">
+
+	<![CDATA[
+	
+	insert into mem_t(m_num, m_name, m_email, m_birth, m_password,  
+	M_MOBILE, M_PHONE, M_ZIPCODE, M_ADDRESS1, M_ADDRESS2, M_POINT, M_REGDATE,
+	M_RANK,  M_ADULT, M_NOTE)
+	values(MEM_T_SEQ.nextval, #{m_name}, #{m_email}, #{m_birth}, #{m_password}, #{m_mobile}, #{m_phone}, #{m_zipcode}, #{m_address1},#{m_address2}
+		, default, sysdate, default, default, '')
+	
+	]]>
+
+	</insert>
+	
+	<!-- 로그인 확인, 아이디 비번 확인 후 레코드 리턴(세션용) -->
+	<select id="loginCheck" resultType="toystory.common.member.model.MemberModel">
+	<![CDATA[
+		select * from mem_t where m_email=#{m_email} and m_password=#{m_password} and m_rank != 'C'
+	]]>
+	</select>
+	
+	<!-- 계정 찾기, e_mail 파라미터 받았다면 비번찾기, 없다면 아이디 찾기 -->
+	<select id="findAccount" resultType="toystory.common.member.model.MemberModel">
+	<![CDATA[
+		select m_email, m_password from mem_t where m_name=#{m_name} and m_mobile=#{m_mobile}
+	]]>	
+		<if test="m_email != null">
+		<![CDATA[
+		  and m_email = #{m_email}
+		 ]]>	
+		</if>
+	
+	</select>
+	
+	<!-- adult y로 업데이트 -->
+	<update id="adultCheck">
+	
+	<![CDATA[
+		update mem_t set m_adult ='Y' 
+		where m_num = #{loginNum} 
+	]]>
+	</update>
+	
+	
+
+
+
+	<!-- 아이디 중복 검사 -->
+	<select id="idCheck" resultType="int">
+	<![CDATA[
+		select count(1) from mem_t where m_email=#{m_email} and m_rank != 'C'
+	]]>
+	</select>
+	
+	
+	<!-- 핸드폰번호 중복 검사 -->
+	<select id="mobileCheck" resultType="int">
+	<![CDATA[
+		select count(1) from mem_t where m_mobile=#{m_mobile} and m_rank != 'C'
+	]]>
+	</select>
+	
+	<!-- email 조건으로 회원정보 1개 select (수정폼 등에서 사용) -->
+	<select id="memberDetail" resultType="toystory.common.member.model.MemberModel">
+	<![CDATA[
+		select * from mem_t where m_num=#{m_num} and m_rank != 'C'
+	]]>
+	
+	</select>
+	
+	
+	<!-- 마이페이지에서 회원정보 수정 처리 update
+		업데이트 항목 : 이름, 핸드폰, 전화, 비밀번호, 우편번호, 주소1, 주소2
+	 -->
+	<update id="memberModify">
+	<![CDATA[
+		update mem_t set m_name=#{m_name}, m_mobile=#{m_mobile}, m_phone=#{m_phone}, 
+		m_password=#{m_password}, m_zipcode=#{m_zipcode} ,m_address1=#{m_address1}, 
+		m_address2=#{m_address2}
+	 
+		where m_email=#{m_email}
+	]]>
+	</update>
+	
+	
+	<update id="adminMemberModifyPro">
+	<![CDATA[
+		update mem_t set m_name=#{m_name}, m_mobile=#{m_mobile}, m_phone=#{m_phone}, 
+		m_zipcode=#{m_zipcode} ,m_address1=#{m_address1}, 
+		m_address2=#{m_address2} , m_note=#{m_note}
+		where m_email=#{m_email}
+	]]>
+	</update>
+	
+	
+	
+	<!-- 회원탈퇴, m_rank를 C로 업데이트, 이메일, 모바일 등 정보는 중복가능성이 있으므로 null 처리 -->
+	<update id="deleteMember">
+	<![CDATA[
+		update mem_t set m_rank='C', m_email=null, m_mobile=null,m_phone=null,
+		m_zipcode=null, m_address1=null, m_address2=null, m_name=null, m_password=null 
+		 where m_email=#{m_email}
+	]]>
+	
+	</update>
+	
+	<!-- 관리자 - 회원목록 조회시 사용, 탈퇴회원 제외한 관리자, 일반회원 모두 조회됨 -->
+	<!-- 상품조에서 페이징 받은 후 처리해야함 -->
+	<select id="selectMemberList" resultType="toystory.common.member.model.MemberModel">
+		<include refid="pagingPre"/>
+		
+		<![CDATA[
+			select ROW_NUMBER() OVER (order by m_regdate desc) rnum, t.* 
+			 from mem_t t
+			 where m_rank != 'C'
+		]]>
+		
+		<if test="type != null and type !=''">
+		<![CDATA[
+			and ${type} like '%'||#{keyword}||'%' 
+			]]>
+		</if>
+		
+		
+		<include refid="pagingPost"/>
+	</select>
+	
+	<select id="allMemberCount" resultType="int">
+	<![CDATA[
+		select count(1) from mem_t where m_rank != 'C'
+	]]>
+	<if test="type != null and type !=''">
+		<![CDATA[
+			and ${type} like '%'||#{keyword}||'%' 
+			]]>
+		</if>
+	
+	</select>
+
+	<sql id="pagingPre">
+      <![CDATA[
+         SELECT
+             AAA.*
+         FROM
+             (SELECT
+                 COUNT(*) OVER() AS TOTAL_COUNT,
+                 AA.*
+             FROM(
+       ]]>
+	</sql>
+	<sql id="pagingPost">
+      <![CDATA[
+            )AA
+          )AAA
+         WHERE
+             (#{pageNum} -1)*#{amount} <AAA.RNUM  AND AAA.RNUM <= #{pageNum} * #{amount}
+      ]]>
+	</sql>
+
+
+</mapper>

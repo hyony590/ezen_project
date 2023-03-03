@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+작성자 : 이은정, 김용주
+작성일 : 2022/11/25
+용도 : basketmapper 
+-->
+
+<mapper namespace="toystory.common.basket.mapper.BasketMapper">
+
+   <!-- 장바구니 추가 처리  -->
+   <!-- <insert id="addBasket" parameterType="toystory.common.basket.model.BasketModel">
+       
+      <![CDATA[
+         insert into basket_t(b_num, g_id,m_num,b_option,b_count,b_price)
+         values (basket_t_seq.nextval, #{g_id}, #{m_num}, #{b_option}, #{b_count}, #{b_price})
+      ]]>
+   </insert> -->
+   
+   <!--작성자 : 최창선 바로주문 장바구니 temp 저장 -->
+	<insert id="addBasket">
+	<![CDATA[
+		insert into basket_t (b_num, g_id, m_num, b_option, b_count, b_price, b_temp)
+		values(basket_t_seq.nextval, #{g_id}, #{m_num}, #{b_option}, #{b_count}, #{b_price}, #{b_temp})
+		]]>
+	</insert>
+	
+	<!-- 바로주문 장바구니에서 temp 인것 꺼내기 -->
+	
+	<select id="getTempBasket" resultType="toystory.common.basket.model.BasketModel">
+	<![CDATA[	 
+		select  b.b_num, b.b_option, b.b_count, b.b_price, b.b_temp, g.g_id, g.g_sale, g.g_name, f.f_svname
+		from basket_t b, goods_t g, (select * from file_t where f_jtname='G' and f_main_yn='Y') f where b_temp ='Y' and b.g_id = g.g_id
+        and f.f_jtkey(+)=g.g_id
+		and m_num = #{m_num} order by b_num desc
+		]]>
+	</select>
+   
+   <!--  장바구니 리스트 폼  -->
+   <select id="basketList" resultType="toystory.common.basket.model.BasketModel">
+      <![CDATA[
+         
+         select f.f_num, g.g_name, g.g_price, b.b_count, b.b_option, g.g_price * b.b_count as totalPrice, g.g_id, b.b_num
+		 from (select * from file_t where f_jtname='G' and f_main_yn='Y') f right outer join goods_t g  on f.f_jtkey = g.g_id 
+    			inner join basket_t b on b.g_id = g.g_id   and and b_temp ='N'
+   		  and b.m_num = #{m_num}
+      ]]>
+   </select>
+   
+   <!--  장바구니 수정 처리  -->
+   <update id="basketModify" parameterType="toystory.common.basket.model.BasketModel">
+      <![CDATA[
+         update basket_t
+         set b_option = #{b_option},
+             b_count= #{b_count}   
+         where b_num = #{b_num}
+      ]]>
+   </update>
+   
+   <!-- 장바구니 한개 삭제 처리 --> 
+   <delete id="basketDeleteOne" parameterType="toystory.common.basket.model.BasketModel">
+      <![CDATA[
+         delete from basket_t
+         where b_num=#{b_num}
+      ]]>
+   </delete>
+   
+   <!--   장바구니 전체 삭제 처리 -->
+   <delete id="basketDeleteAll" parameterType="toystory.common.basket.model.BasketModel">
+      <![CDATA[
+         delete from basket_t
+         where m_num=#{m_num}
+      ]]>
+   </delete>
+   
+   <!-- 카트 확인 -->
+	<select id="checkBasket" resultType="toystory.common.basket.model.BasketModel">
+		<![CDATA[
+		select * from basket_t 
+		where m_num = #{m_num} and g_id = #{g_id}
+		]]>
+	</select>
+
+</mapper>

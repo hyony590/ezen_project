@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 작성자: 강승현 작성일 22/11/25 용도 : 게시판, 댓글관련 SQL쿼리문 -->
+
+<mapper namespace="toystory.common.god.mapper.GodMapper">
+
+	<!-- noticeRegister 공지게시판 추가 쿼리문 -->
+
+	<!-- 관리자가 공지/이벤트 글 등록 -->
+	<insert id="noticeRegister"
+		parameterType="toystory.common.notice.model.NoticeModel"
+		useGeneratedKeys="true" keyProperty="n_num">
+		<selectKey keyProperty="n_num" order="BEFORE"
+			resultType="int">
+			select notice_t_seq.nextval from dual
+		</selectKey>
+      <![CDATA[
+      insert into notice_t
+      values(#{n_num}, #{n_title}, sysdate, #{n_content}, default, default, default)
+       ]]>
+	</insert>
+
+	<!-- upNoticeHitCount 공지게시판 조회수 증가 -->
+	<update id="upNoticeHitCount" parameterType="int">
+   <![CDATA[
+   update notice_t
+   set
+   n_count = n_count+1
+   where n_num = #{n_num}   
+    ]]>
+	</update>
+	
+	<!-- 작성자 : 이효원, 남재욱 - 12.15 전체 게시글 개수 계산 쿼리 추가 -->
+	<select id="noticeListTotalCount" resultType='int'>
+		<![CDATA[
+		select count(*)
+     	from notice_t
+		where n_del_yn='N'
+      ]]>
+	</select>
+
+	<!-- selectNotice 공지게시판 리스트 -->
+	<select id="selectNotice" resultType="toystory.common.notice.model.NoticeModel">
+		
+		<include refid="pagingPre"></include>
+		   <![CDATA[
+		 select ROW_NUMBER() OVER (order by n_regdate desc) rnum, rownum, n_num, n_title, n_count, n_regdate
+	   	from notice_t
+	   	where n_del_yn = 'N'
+	   	order by n_regdate desc
+		    ]]>
+		<include refid="pagingPost"></include>
+	   
+	</select>
+
+	<!-- 공지 게시판 상세보기 -->
+	<select id="noticeDetail"
+		resultType="toystory.common.notice.model.NoticeModel">
+   <![CDATA[
+     select n.n_num, n.n_title, n.n_content, n.n_regdate, LISTAGG(f.f_svname, ',') WITHIN GROUP(ORDER BY f.f_num) AS f_svname
+    from notice_t n ,(select * from file_t where f_jtname='N') f
+    where f.f_jtkey(+) = n.n_num and n.n_num = #{n_num} and n.n_del_yn = 'N' and f.f_del_yn(+) = 'N'
+    group by n.n_num, n.n_title, n.n_content, n.n_regdate
+    ]]>
+	</select>
+
+	<!-- noticeDelete 공지게시판 삭제 -->
+	<update id="noticeDelete" parameterType="int">
+   <![CDATA[
+   update notice_t n
+   set
+   n.n_del_yn = 'Y'
+   where n_num = #{n_num}
+    ]]>
+	</update>
+
+	<!-- noticeModify 공지게시판 수정 -->
+	<update id="noticeModifyPro">
+   <![CDATA[
+   update notice_t
+   set
+   n_title = #{n_title}, n_content = #{n_content}, n_regdate = sysdate
+   where n_num = #{n_num}
+    ]]>
+	</update>
+
+	<!-- selectReview 리뷰 게시판 상품상세보기에서 읽기 -->
+	<select id="selectReview" resultType = "toystory.common.review.model.ReviewModel">
+   <include refid="pagingPre"></include>
+   <![CDATA[
+    select ROW_NUMBER() OVER (order by r.r_regdate desc) rnum ,r.r_num, r.r_title, r.r_comment, r.o_num, r.m_num, r.r_regdate, r.r_star, 
+    r.r_content, o.o_option, o.o_count,o.g_id, m.m_name, LISTAGG(f.f_svname, ',') WITHIN GROUP(ORDER BY f.f_num) AS f_svname 
+   from (select * from file_t where f_jtname = 'R') f, review_t r, order_t o, mem_t m
+   where  o.g_id = #{g_id} and r.o_num = o.o_num and m.m_num = o.m_num and f.f_jtkey(+) = r.r_num and f.f_del_yn(+) = 'N' and r.r_del_yn = 'N'
+   group by r.r_num, r.r_title, r.r_comment, r.o_num, r.m_num, r.r_regdate, r.r_star, r.r_content, o.o_option, o.o_count,o.g_id, m.m_name
+   ]]>
+   <include refid="pagingPost"></include>
+	</select>
+	
+	<!-- 상품 상세보기에서 보이는 리뷰 갯수 합계 -->
+	<select id="goodsReviewTotal" resultType="int">
+   <![CDATA[
+     select count(distinct r_num)
+    from review_t r, order_t o
+    where r.r_del_yn = 'N' and o.o_num = r.o_num and o.g_id = #{g_id}
+	]]>
+	</select>
+	
+	<!-- selectQna 문의 게시판 상품상세보기에서 읽기 -->
+	<select id="selectQna"
+		resultType="toystory.common.qna.model.QnaModel">
+      <include refid="pagingPre"></include>
+      <![CDATA[
+        select ROW_NUMBER() OVER (order by q.q_regdate desc) rnum,q.*, m.m_name
+ 		from mem_t m , qna_t q
+ 		where q.g_id = #{g_id} and q.m_num = m.m_num
+      ]]>
+       <include refid="pagingPost3"></include>
+	</select>
+	
+	<!-- 상품 상세보기에서 보이는 리뷰 갯수 합계 -->
+	<select id="goodsQnaTotal" resultType="int">
+   <![CDATA[
+    select count(*)
+   from qna_t
+   where g_id = #{g_id}
+	]]>
+	</select>
+
+	<!-- reviewRegister 마이페이지-주문내역 확인-구매확정 버튼을 통한 리뷰 게시글 추가 -->
+	<insert id="reviewRegisterPro"
+		parameterType="toystory.common.review.model.ReviewModel"
+		keyProperty="r_num">
+		<selectKey keyProperty="r_num" order="BEFORE" resultType="int">
+			select review_t_seq.nextval from dual
+		</selectKey>
+      <![CDATA[
+		insert into review_t(r_num, r_title, r_content, o_num, m_num, r_regdate, r_del_yn, r_answer_yn, r_star)
+		values (#{r_num}, #{r_title}, #{r_content}, #{o_num}, #{m_num}, sysdate, default, default, #{r_star})
+       ]]>
+	</insert>
+	
+	<!-- qnaRegister 상품 상세보기에서 문의 게시글 추가 -->
+	<insert id="qnaRegisterPro" parameterType="toystory.common.qna.model.QnaModel"
+		keyProperty="q_num">
+		<selectKey keyProperty="q_num" order="BEFORE" resultType="int">
+			select qna_t_seq.nextval from dual
+		</selectKey>
+      <![CDATA[
+   insert into qna_t(q_num, q_title, q_content, g_id, m_num, q_regdate, q_del_yn)
+   values (#{q_num}, #{q_title}, #{q_content}, #{g_id}, #{m_num} , sysdate , default)
+       ]]>
+	</insert>
+	
+	<!-- 사용자가 보는 본인이 쓴 리뷰 상세보기 -->
+    <select id="memberReviewDetail"
+      resultType="toystory.common.review.model.ReviewModel">
+   <![CDATA[
+          select r.r_num, r.r_title, r.r_comment, r.r_regdate, r.r_star, r.r_content, o.o_option, o.o_count, o.g_id, g.g_name, LISTAGG(f.f_svname, ',') WITHIN GROUP(ORDER BY f.f_num) AS f_svname 
+   from (select * from file_t where f_jtname = 'R') f, review_t r, order_t o, goods_t g
+   where  r.r_num = #{r_num} and r.o_num = o.o_num and f.f_jtkey(+) = r.r_num and o.g_id = g.g_id and f.f_del_yn(+) = 'N' and r.r_del_yn = 'N'
+   group by r.r_num, r.r_title, r.r_comment,  r.r_regdate, r.r_star, r.r_content, o.o_option, o.o_count, o.g_id, g.g_name
+   ]]>
+   </select>
+	
+	 <!-- 사용자가 보는 본인이 쓴 문의 상세보기 -->
+   <select id="memberQnaDetail"
+      resultType="toystory.common.qna.model.QnaModel">
+   <![CDATA[
+       select q.*, g.g_name
+   from qna_t q, goods_t g
+   where g.g_id = q.g_id and q.q_num = #{q_num}
+   ]]>
+   </select>
+
+   <!-- 관리자가 한번에 볼 수 있는 리뷰 문의 리스트 -->
+   <select id="adminReviewList"
+      resultType="toystory.common.review.model.ReviewModel">
+      <include refid="pagingPre"></include>   
+   <![CDATA[
+   select  ROW_NUMBER() OVER (order by regdate desc) rnum , rownum , type, g_name, num r_num, title r_title, regdate r_regdate,  m_name, comment_yn from (
+    select  type, num, title, regdate, m_name, g_name, comment_yn from
+    (
+        select 'R' type , nvl2(r.r_comment, 1, 0) comment_yn, (select g_name from goods_t g where g.g_id=o.g_id) g_name, (select m_name from mem_t m where m.m_num=r.m_num) m_name, 
+        r_num num, r_title title , r_regdate regdate  from review_t r, order_t o where r.o_num=o.o_num and r.r_del_yn = 'N'
+        union all
+        select 'Q' type, nvl2(q.q_comment, 1, 0) comment_yn, (select g_name from goods_t g where g.g_id=q.g_id) g_name, (select m_name from mem_t m where m.m_num=q.m_num) m_name, q_num num, q_title title, q_regdate regdate from qna_t q where q_del_yn = 'N'
+    ) order by regdate desc
+)
+   ]]>
+      <include refid="pagingPost"></include>
+   </select>
+	
+	<select id="reviewListTotalCount" resultType="int">
+	<![CDATA[
+	   select sum(total) from
+    (select count(*)as total from review_t where r_del_yn = 'N' union all select count(*) as total from qna_t where q_del_yn = 'N')
+    ]]> 
+    </select>
+
+	<!-- 관리자페이지에서 리뷰 상세보기 -->
+	<select id="adminReviewDetail" resultType="toystory.common.review.model.ReviewModel">
+   <![CDATA[
+     select r.r_num, r.r_title, r.r_comment, r.r_regdate, r.r_star, r.r_content, o.o_option, o.o_count, o.g_id, g.g_name, m.m_name, LISTAGG(f.f_svname, ',') WITHIN GROUP(ORDER BY f.f_num) AS f_svname 
+   from (select * from file_t where f_jtname = 'R') f, review_t r, order_t o, goods_t g, mem_t m
+   where  r.r_num = #{r_num} and r.o_num = o.o_num and f.f_jtkey(+) = r.r_num and o.g_id = g.g_id and f.f_del_yn(+) = 'N' and m.m_num = r.m_num
+   group by r.r_num, r.r_title, r.r_comment,  r.r_regdate, r.r_star, r.r_content, o.o_option, o.o_count, o.g_id, g.g_name, m.m_name
+   ]]>
+	</select>
+
+	<!-- 관리자페이지에서 문의 상세보기 -->
+	<select id="adminQnaDetail" resultType="toystory.common.qna.model.QnaModel">
+   <![CDATA[
+    select q.q_title, q.q_content , q.q_regdate, m.m_name , g.g_name, q.q_num, q.q_comment
+	from qna_t q, mem_t m, goods_t g
+	where m.m_num = q.m_num and g.g_id = q.g_id and q.q_num=#{q_num}
+   ]]>
+	</select>
+	
+	<!-- 관리자가 리뷰글에 댓글 달기 -->
+	<update id = "reviewCommentRegister" >
+	<![CDATA[
+	update review_t
+	set r_comment = #{r_comment}
+	where r_num = #{r_num}
+	]]>
+	</update>
+	
+	<!-- 관리자가 리뷰글에 댓글 달기 -->
+	<update id = "qnaCommentRegister">
+	<![CDATA[
+	update qna_t
+	set q_comment = #{q_comment}
+	where q_num = #{q_num}
+	]]>
+	</update>
+	
+	<!-- 사용자가 한번에 볼 수 있는 사용자 본인의 리뷰 문의 리스트 -->
+	<select id="memberReviewList" resultType="toystory.common.review.model.ReviewModel">
+	
+	<include refid="pagingPre"></include>
+   <![CDATA[
+        select  ROW_NUMBER() OVER (order by regdate desc) rnum , type, g_name, num r_num, title r_title, regdate r_regdate,  comment_yn from (
+    select  type, num, title, regdate,  g_name, comment_yn from
+    (
+        select 'R' type , nvl2(r.r_comment, 1, 0) comment_yn, r.m_num,(select g_name from goods_t g where g.g_id=o.g_id) g_name,  r_num num, r_title title , r_regdate regdate from review_t r, order_t o where r.o_num=o.o_num and r.r_del_yn = 'N'
+        union all
+        select 'Q' type, nvl2(q.q_comment, 1, 0) comment_yn, q.m_num, (select g_name from goods_t g where g.g_id=q.g_id) g_name, q_num num, q_title title, q_regdate regdate from qna_t q where q.q_del_yn = 'N'
+    )where m_num = #{m_num}
+    )
+	]]>
+	 <include refid="pagingPost"></include>
+	</select>
+	
+	<!-- 사용자의 리뷰 문의 갯수 합계 -->
+	<select id="memberRQtotal" resultType="int">
+   <![CDATA[
+        select count(*)
+        from 
+        (select m_num  from review_t where r_del_yn = 'N'
+        union all 
+        select  m_num  from qna_t  where q_del_yn = 'N' ) where m_num = #{m_num}
+   
+	]]>
+	</select>
+	
+	<!-- 파일 등록  -->
+      <insert id='fileRegister' parameterType='toystory.common.notice.model.NoticeModel'>
+      <![CDATA[
+      insert into file_t(f_num, f_jtname, f_jtkey, f_ogname, f_svname, f_size, f_regdate, f_del_yn)
+      values(file_t_seq.nextval, #{f_jtname}, #{n_num}, #{f_ogname}, #{f_svname}, #{f_size}, sysdate, 'N')
+       ]]>
+      </insert>
+      
+      <!-- 작성자 : 이효원, 남재욱 - 12.15 페이징 쿼리 추가 -->
+	<sql id="pagingPre">
+      <![CDATA[
+         SELECT
+             AAA.*
+         FROM
+             (SELECT
+                 COUNT(*) OVER() AS TOTAL_COUNT,
+                 AA.*
+             FROM(
+       ]]>
+   </sql>
+   <sql id="pagingPost">
+      <![CDATA[
+            )AA
+          )AAA
+         WHERE
+             (#{pageNum} -1)*#{amount} <AAA.RNUM  AND AAA.RNUM <= #{pageNum} * #{amount}
+      ]]>
+   </sql>
+  
+   <sql id="pagingPost3">
+      <![CDATA[
+            )AA
+          )AAA
+         WHERE
+             (#{QpageNum} -1)*#{Qamount} <AAA.RNUM  AND AAA.RNUM <= #{QpageNum} * #{Qamount}
+      ]]>
+   </sql>
+   
+   <!-- 강승현 파일 삭제처리 -->
+   <update id="fileDelete" parameterType = "toystory.common.review.model.ReviewModel">
+   <![CDATA[
+       update file_t
+       set f_del_yn = 'Y'
+       where f_svname = #{f_svname}
+    ]]>
+    </update>
+    
+    <!-- 리뷰글 수정 처리 -->
+   <update id = "reviewModifyPro">
+   <![CDATA[
+   update review_t
+    set r_title = #{r_title}, r_content = #{r_content}, r_star = #{r_star}
+    where r_num = #{r_num}
+   ]]>
+   </update>
+   
+   <!-- 리뷰글 삭제 처리 -->
+   <update id = "reviewDelete">
+   <![CDATA[
+   update review_t
+    set r_del_yn = 'Y'
+    where r_num = #{r_num}
+   ]]>
+   </update>
+   
+   
+   <!-- 문의 게시글 삭제처리 -->
+   <update id = "qnaDelete">
+   <![CDATA[
+   update qna_t
+    set q_del_yn = 'Y'
+    where q_num = #{q_num}
+   ]]>
+   </update>
+   
+
+</mapper>

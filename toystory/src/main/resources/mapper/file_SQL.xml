@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="toystory.common.file.mapper.FileMapper">
+
+
+
+	<insert id="fileRegister" parameterType='toystory.utils.file.AttachFileModel' useGeneratedKeys="true" keyProperty="g_id">
+
+		<selectKey keyProperty="f_num" order="BEFORE" resultType="int">
+			select file_t_seq.nextval from dual
+		</selectKey>
+		
+		insert into file_t(f_num, f_jtname, f_jtkey, f_ogname, f_svname, f_size,	f_regdate, f_del_yn, f_main_yn)
+		values(#{f_num}, #{f_jtname},	#{f_jtkey}, #{f_ogname}, #{f_svname}, #{f_size}, sysdate, 'N', #{f_main_yn})
+	</insert>
+
+	<update id="mainCheck">
+		update file_t set f_main_yn='Y' where f_num = #{f_num}
+	</update>
+
+
+	<!-- 최창선 -->
+	<select id="imageList"
+		resultType="toystory.utils.file.AttachFileModel">
+
+		select * 
+		from file_t 
+		where f_jtname = #{f_jtname} and f_del_yn='N' and f_jtkey= #{f_jtkey}
+
+	</select>
+
+<!--12.26 이효원, 남재욱-->
+	<!-- 메인 파일 수정  -->
+   <update id='mainUpdate' parameterType='toystory.utils.file.AttachFileModel'>
+      <![CDATA[   
+      update file_t 
+      set f_ogname=#{f_ogname}, f_svname=#{f_svname}, f_size=#{f_size},f_regdate=sysdate, f_del_yn='N', f_main_yn='Y'
+      where f_jtkey = #{f_jtkey} and f_main_yn='Y'
+      ]]>
+   </update>
+   
+   	<!--12.27 이효원, 남재욱-->
+	<!-- 기존 이미지 삭제 -->
+	<update id="fileDelete" parameterType='toystory.utils.file.AttachFileModel'>
+		<![CDATA[   
+	   update file_t
+	   set f_del_yn='Y'
+	   where f_num=#{f_num} and f_main_yn='N'
+		]]>
+	</update>
+	
+	<!--12.27 이효원, 남재욱-->
+	<!-- 기존 이미지 삭제 -->
+	<insert id="fileAdd" parameterType='toystory.utils.file.AttachFileModel'>
+      insert into file_t(f_num, f_jtname, f_jtkey, f_ogname, f_svname, f_size, f_regdate, f_del_yn, f_main_yn)
+      values(file_t_seq.nextval, #{f_jtname}, #{f_jtkey}, #{f_ogname}, #{f_svname}, #{f_size}, sysdate, 'N', #{f_main_yn})
+   </insert>
+
+</mapper>

@@ -1,0 +1,9 @@
+@charset "UTF-8";
+
+.outer{
+	text-align: center;
+}
+
+.inner{
+	display : inline-block;
+}

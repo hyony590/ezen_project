@@ -1,0 +1,271 @@
+@charset "UTF-8";
+
+:root { 
+	-color-default: #212529; 
+	-color-primary: #9b55d4; 
+	-color-secondary: #37373f;
+	--bs-link-hover-color: #9b55d4;
+}
+
+
+/*--------------------------------------------------------------
+# 공지 게시판
+--------------------------------------------------------------*/
+#notice { 
+	padding:50;
+	margin-top: 140px;
+	margin-bottom: 90px;
+	text-align: center;
+} 
+
+#notice h3 {
+	font-weight: bold;
+}
+
+#notice th, td {
+	text-align: center;
+}
+
+.NLB {
+	background: #ffffff;
+	color: #9b55d4;
+}
+
+.pagination {
+	margin-top: 50px;
+  --bs-pagination-active-bg: #9b55d4;
+  --bs-pagination-active-border-color: #9b55d4;
+  --bs-pagination-color : #9b55d4;
+}
+
+.page-link {
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 9px;
+	padding-right: 10px;
+}
+
+.page-link:focus, .page-link:hover {
+  color: #fff;
+  background-color: rgba(155, 85, 212); 
+  border-color: #9b55d4;
+}
+
+.page-link.active {
+ z-index: 1;
+ color: #fff;
+ font-weight:bold;
+ background-color: #9b55d4;
+ border-color: #9b55d4;
+ 
+}
+
+
+/*--------------------------------------------------------------
+# 공지 게시판 상세보기
+--------------------------------------------------------------*/
+#noticeD { 
+	padding:50;
+	margin-top: 190px;
+	margin-bottom: 150px;
+	text-align: center;
+} 
+
+#noticeD h3 {
+	font-weight: bold;
+}
+
+#noticeD th, td {
+	text-align: center;
+}
+
+#noticeD .btn-book-a-table {
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 50px;
+  transition: 0.5s;
+  color: #fff;
+  background: var(--color-primary);
+
+}
+
+#Nbtn {
+	margin-top: 30px;
+}
+
+ul li {
+	list-style-type: none;
+	float: left;
+}
+
+#mytab {
+	vertical-align:middle;
+}
+
+.dbtn {
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 50px;
+  transition: 0.5s;
+  color: #fff;
+  background: #c2c2c2;
+
+}
+
+
+
+
+/*--------------------------------------------------------------
+# Admin 공지 게시글 등록
+--------------------------------------------------------------*/
+#noticeF { 
+	padding:50;
+	margin-top: 190px;
+	margin-bottom: 150px;
+	text-align: center;
+} 
+
+#noticeF h3 {
+	font-weight: bold;
+	margin-bottom: 50px;
+}
+
+#noticeF .btn-book-a-table {
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 50px;
+  transition: 0.5s;
+  color: #fff;
+  background: var(--color-primary);
+  border: 0;
+}
+
+#noticeF input, textarea:focus {
+	outline: none;
+}
+
+
+#noticeF input, textarea {
+  outline: none;
+  box-shadow: none;
+  font-size: 14px;
+}
+
+
+/*--------------------------------------------------------------
+# Admin 공지 게시글 리스트
+--------------------------------------------------------------*/
+
+#ANbtn .btn-book-a-table {
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 50px;
+  transition: 0.5s;
+  color: #fff;
+  background: var(--color-primary);
+  margin-top:20px;
+}
+
+
+/*--------------------------------------------------------------
+# 상품 상세보기에서 리뷰/문의 관련
+--------------------------------------------------------------*/
+#GQRF { 
+	padding:50;
+	margin-bottom: 150px;
+} 
+
+#GQRF h3 {
+	text-align: center;
+	font-weight: bold;
+	margin-bottom: 50px;
+}
+
+#GQRF .btn-book-a-table {
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 50px;
+  transition: 0.5s;
+  color: #fff;
+  background: var(--color-primary);
+  border: 0;
+}
+
+#GQRF input, textarea:focus {
+	outline: none;
+}
+
+
+#GQRF input, textarea {
+  box-shadow: none;
+  font-size: 14px;
+}
+
+
+/*--------------------------------------------------------------
+# 리뷰 작성에서의 별점 구현
+--------------------------------------------------------------*/
+#myform fieldset{
+    display: inline-block;
+    direction: rtl;
+    border:0;
+}
+#myform fieldset legend{
+    text-align: right;
+}
+#myform input[type=radio]{
+    display: none;
+}
+#myform label{
+    font-size: 3em;
+    color: transparent;
+    text-shadow: 0 0 0 #f0f0f0;
+}
+#myform label:hover{
+    text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+}
+#myform label:hover ~ label{
+    text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+}
+#myform input[type=radio]:checked ~ label{
+    text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+}
+
+#p {
+	font-weight: bold;
+	font-size:20px;
+	margin-top: 40px;
+}
+
+
+/*--------------------------------------------------------------
+# 파일 업로드 버튼 
+--------------------------------------------------------------*/
+input[type=file]::file-selector-button {
+  width: 90px;
+  height: 30px;
+  color: #ffffff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  &:hover {
+    background: rgb(77,77,77);
+    color: #fff;
+  }
+}

@@ -1,0 +1,50 @@
+order_t 
+ - alter table order_t add o_email varchar2(100);
+ - 컬럼 추가
+ 
+order_t 컬럼 추가 o_email varchar2(100)
+review_t, qna_t r_comment varchar2(500)
+
+
+alter table order_t add o_email varchar2(100);
+alter table review_t add r_comment varchar2(500);
+alter table qna_t add q_comment varchar2(500);
+
+
+
+comment 테이블 삭제
+
+
+2022-12-10
+
+jsp - admin/*/* 로 수정(adminGoods...)
+문의작성하기 - tiles에 설정 없어서 추가
+<definition name="popupView/*" extends="main_layout">
+	<put-attribute name="body" value="/WEB-INF/views/popupView/{1}.jsp"/>
+</definition>
+
+
+
+22-12-17
+
+alter table order_t add o_email varchar2(100);
+alter table review_t add r_comment varchar2(500);
+alter table qna_t add q_comment varchar2(500);
+alter table file_t add f_main_yn varchar2(1);
+alter table basket_t add b_temp varchar2(1);
+
+create or replace trigger trg_01
+after insert on review_t
+for each row
+begin
+update order_t
+set o_delivery = 5
+where order_t.o_num = :new.o_num;
+end;
+/
+
+
+
+
+
+

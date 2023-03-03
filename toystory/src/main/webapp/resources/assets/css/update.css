@@ -1,0 +1,247 @@
+/* Colors */
+:root {
+  --color-default: #212529;
+  --color-primary: #9b55d4;
+  --color-secondary: #37373f;
+}
+
+/* Fonts */
+body {
+	font-family: 'Noto Sans KR', sans-serif;
+}
+
+.breadcrumbs {
+  padding: 15px 0;
+  background: rgba(255,255,255,0.5);
+  margin-top: 50px;
+}
+
+
+
+#hero img {
+	margin-top: 130px;
+	margin-bottom: 50px;
+}
+
+/*--------------------------------------------------------------
+# Header
+--------------------------------------------------------------*/
+.header {
+  background: #fff;
+  transition: all 0.5s;
+  z-index: 997;
+  height: 160px;
+  border-bottom: 1px solid #fff;
+}
+
+@media (max-width: 575px) {
+  .header {
+    height: 70px;
+  }
+}
+
+.header .logo h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  font-family: var(--font-secondary);
+}
+
+.header .logo h1 span {
+  color: var(--color-primary);
+}
+
+/* 로그인 영역 */
+.loginArea {
+    position: fixed;
+    top: 20px;
+    left: -200px;
+    width: 100%;
+    z-index: 12;
+    text-align: right;
+    font-size: 13px;
+}
+
+
+
+/*--------------------------------------------------------------
+# header div 정렬
+--------------------------------------------------------------*/
+/* 부모 div */
+.parent{
+    width: 100%;
+    margin: 10px auto;
+}
+
+/* 로고 이미지 div */
+.first {
+   /*  border: 1px solid red; */
+    float: left;
+    width:100%;
+    margin-left: -110px;
+    margin-top: 70px;
+    /* box-sizing: border-box; */
+}
+
+.logoArea {
+  max-height: 35px; 
+  margin-right: 36px;
+  /* position: fixed; */
+}
+
+/* 카테고리 div */
+.second{
+    /* border: 1px solid green; */
+    float: left;
+    margin-left: 15%;
+    /* width:30%; */
+	margin-top: -160px;
+    /* box-sizing: border-box; */
+}
+
+.second2{
+    /* border: 1px solid green; */
+    float: left;
+    margin-left: 22%;
+    /* width:30%; */
+	margin-top: -161px;
+    /* box-sizing: border-box; */
+}
+
+/* 검색창 div */
+.third{
+   /*  border: 1px solid blue; */
+    float: right;
+    width:30%;
+    height: 30px;
+    margin-top: -80px;
+    /* box-sizing: border-box; */
+    text-align: right;
+}
+
+
+/*--------------------------------------------------------------
+# 통합검색창 
+--------------------------------------------------------------*/
+.Hsearch {
+	position: relative;
+	left: 0px;
+	top: 0;
+}
+
+.Hsearch input {
+	width: 305px;
+	height: 27px;
+	margin-top: 10px;
+}
+
+.Hsearch input::placeholder {
+	font-size: 0.8em;
+}
+
+.Hsearch input:focus {
+	outline: none;
+}
+
+.Hsearch button {
+	position : absolute;
+	border: none;
+	background-color: #ffffff
+}	
+
+.Hsearch img {
+	position : absolute;
+	width: 17px;
+	height: 17px;
+    margin-top: 13px;
+}
+
+
+
+/*--------------------------------------------------------------
+# Desktop Navigation
+--------------------------------------------------------------*/
+@media (min-width: 1280px) {
+  .navbar {
+    padding: 0;
+    margin-top: 160px;
+  }
+  
+  .navbar>ul>li {
+    white-space: nowrap;
+    padding: 5px 50px 30px 28px;
+  }
+  
+
+/*--------------------------------------------------------------
+# Sections & Section Header 배너부분
+--------------------------------------------------------------*/
+section {
+  overflow: hidden;
+  padding: 20;
+}
+
+
+
+/*--------------------------------------------------------------
+# 섹션 여백 221125 한원
+--------------------------------------------------------------*/
+#sec1 { 
+	padding:50;
+} 
+
+#sec1 h3 {
+	font-weight: bold;
+}
+
+/*--------------------------------------------------------------
+# 메뉴아이템 이미지 모서리 둥글게 221125 한원
+--------------------------------------------------------------*/
+.radius_img {
+    border-radius: 10%;
+    width: 350px;
+	height: 350px;
+	margin-bottom: 10px;
+}
+
+/*--------------------------------------------------------------
+# 메인페이지 상품명과 상품가격
+--------------------------------------------------------------*/
+.tab-content .menu-item {
+  -moz-text-align-last: center;
+  text-align-last: center;
+  text-align: center;
+  font-size:small;
+  font-weight: bold;
+  
+}
+
+.pagination {
+	margin-top: 50px;
+  --bs-pagination-active-bg: #9b55d4;
+  --bs-pagination-active-border-color: #9b55d4;
+  --bs-pagination-color : #9b55d4;
+}
+
+.page-link {
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 9px;
+	padding-right: 10px;
+}
+
+.page-link:focus, .page-link:hover {
+  color: #fff;
+  background-color: rgba(155, 85, 212); 
+  border-color: #9b55d4;
+}
+
+.page-link.active {
+ z-index: 1;
+ color: #fff;
+ font-weight:bold;
+ background-color: #9b55d4;
+ border-color: #9b55d4;
+ 
+}

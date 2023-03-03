@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<!-- 
+작성자 : 남재욱, 이효원
+작성일 : 2022.11.24
+용도 : 상품관련 SQL 쿼리문 
+-->
+  
+<!-- namespace의 이름은 Mapper인터페이스의 이름과 동일하게 작성한다... -->
+<mapper namespace="toystory.common.goods.mapper.GoodsMapper">
+   
+<!-- <select id="goodsList" resultType="toystory.common.goods.model.GoodsModel">
+   select * from goods_t
+   </select> -->
+   
+   
+   <!-- 카테고리별 상품조회 -->
+   <select id="goodsList" resultType='toystory.common.goods.model.GoodsModel'>
+   
+   	<include refid="pagingPre"/>
+   
+      select ROW_NUMBER() OVER (<include refid="sort"/>) rnum, g_id, g_name, g_price, g_stock, g_category, g_sale, g_bestnew, g_option, f.*
+      from goods_t g, (select * from file_t where f_jtname='G' and f_main_yn='Y') f
+      where g.g_id = f.f_jtkey(+)
+      and g_del_yn='N' and g_category=#{g_category}
+      
+     <include refid="pagingPost"/>
+      
+   </select>
+   
+
+   
+   <!-- 관리자 페이지 상품 전체 조회  -->
+   <select id="goodsAllList" resultType='toystory.common.goods.model.GoodsModel'>
+   <include refid="pagingPre"/>
+      select ROW_NUMBER() OVER (order by g.g_date desc) rnum, g.g_id, g.g_name, g.g_price, g.g_stock, g.g_category, g.g_sale, g.g_bestnew, g.g_option,g.g_sold, f_svname
+      from goods_t g, file_t f
+      where g.g_del_yn='N' and f_main_yn = 'Y' and f_jtname = 'G' and f_jtkey = g.g_id
+      <include refid="pagingPost"/>
+   </select>
+   
+   <!-- 상세정보, 관리자용 상품 수정 폼 -->
+   <select id="goodsDetail" resultType='toystory.common.goods.model.GoodsModel'>
+      <![CDATA[
+       select g.g_id, g.g_name, g.g_option, g.g_price, g.g_stock, g.g_date, g.g_category, g.g_brand, g.g_sale 
+      from goods_t g
+      where g.g_id = #{g_id}
+      ]]>
+   </select>
+   
+   
+
+      <!-- 관리자용 상품 등록 처리 -->
+   <insert id="goodsRegister" parameterType='toystory.common.goods.model.GoodsModel' useGeneratedKeys="true" keyProperty="g_id">
+      <selectKey keyProperty="g_id" order="BEFORE" resultType="int">
+         select goods_t_seq.nextval from dual
+      </selectKey>
+         <![CDATA[
+       insert into goods_t(g_id, g_name, g_option, g_price, g_stock, g_date, g_category, g_brand, g_sale)
+      values (#{g_id}, #{g_name}, #{g_option}, #{g_price}, #{g_stock}, sysdate, #{g_category}, #{g_brand}, #{g_sale} )
+       ]]>
+      </insert>
+      
+      <!-- 상품 등록 번호 가져오기 (매개 변수를 받아서 처리하기보다 깔끔, goodsAllList는 'N' 필터링이 있기 때문에 하기 내용 작성 -->
+      <select id="goodsRegisterNumber" resultType='toystory.common.goods.model.GoodsModel'>
+         <![CDATA[
+       select g_id
+       from goods_t
+       ]]>
+       </select>
+      
+    
+     <!-- 관리자용 상품 수정 처리 : g_id 값 받아서 수정하기 -->   
+   <update id='goodsModify' parameterType='toystory.common.goods.model.GoodsModel'>
+      <![CDATA[
+      update goods_t 
+      set g_name=#{g_name}, g_option=#{g_option}, g_date=sysdate, g_price=#{g_price}, g_stock=#{g_stock}, g_category=#{g_category}, g_brand=#{g_brand}, g_sale=#{g_sale}
+      where g_id = #{g_id}
+      ]]>
+   </update>
+   
+   <!-- 파일 수정 -->
+   <update id='fileModify' parameterType='toystory.common.goods.model.GoodsModel'>
+       <![CDATA[
+      update file_t
+      set f_ogname=#{f_ogname}, f_svname=#{f_svname}, f_size=#{f_size}, f_regdate=sysdate, f_del_yn='N'
+      where f_jtkey = #{g_id}
+      ]]>   
+   </update>
+   
+   
+   <!-- 관리자용 상품 삭제 처리 -->
+   <update id='goodsDelete' parameterType='toystory.common.goods.model.GoodsModel'>
+      <![CDATA[
+      update goods_t set g_del_yn='Y' where g_id = #{g_id}
+      ]]>
+   </update>
+   
+   <!-- 파일 삭제 -->
+   <update id='fileDelete' parameterType='toystory.common.goods.model.GoodsModel'>
+      <![CDATA[   
+      update file_t set f_del_yn='Y' where f_jtkey = #{g_id}
+      ]]>
+   </update>
+   
+    <!-- BEST 상품 TOP3 -->
+   <select id='goodsBestTop' resultType='toystory.common.goods.model.GoodsModel'>
+      <![CDATA[
+       select rownum, g_id, f_num, f_jtkey, g_name, g_price, g_sold, f_ogname, f_svname, g_brand, g_sale, g_category
+      from (select rownum , g_id, f_num, f_jtkey, g_name, g_price, g_sold, f_ogname, f_svname, g_brand, g_sale, g_category
+         from goods_t g right outer join (select * from file_t where f_jtname='G' and f_main_yn='Y') f ON g.g_id = f.f_jtkey
+       order by g_sold desc)
+      where rownum <= 3 and g_category <> '5'
+      ]]>
+   </select>
+   
+   <!-- 신상품 TOP3 -->
+   <select id='goodsNewTop' resultType='toystory.common.goods.model.GoodsModel'>
+      <![CDATA[
+      select rownum, g_id, f_num, f_jtkey, g_name, g_price, g_sold, f_ogname, f_svname, g_brand, g_sale, g_category
+      from (select rownum , g_id, f_num, f_jtkey, g_name, g_price, g_sold, f_ogname, f_svname, g_brand, g_sale, g_category
+         from goods_t g right outer join (select * from file_t where f_jtname='G' and f_main_yn='Y') f ON g.g_id = f.f_jtkey
+       order by g_date desc)
+      where rownum <= 3 and g_category <> '5'
+      ]]>
+   </select>
+   
+   <!-- 카테고리 별 상품 개수 -->
+   <select id='goodsListTotalCount' resultType='int'>
+      <![CDATA[
+      select count(*)
+      from goods_t
+      where g_category=#{g_category} and g_del_yn='N'
+      ]]>
+   </select>
+   
+   <!-- 12.15 전체 상품 개수 계산 쿼리 추가 -->
+   <select id='goodsListTotalCountAll' resultType='int'>
+      <![CDATA[
+      select count(*)
+      from goods_t
+      where g_del_yn='N'
+      ]]>
+   </select>
+   
+     
+   <!-- 통합검색 -->
+    <select id='goodsSearchAll' resultType='toystory.common.goods.model.GoodsModel'>
+    <include refid="pagingPre"/>
+      <![CDATA[
+      select ROW_NUMBER() OVER (order by g_date desc) rnum, g_id, g_name, g_price, g_stock, g_category, g_sale, g_bestnew, f.*
+      from goods_t g, (select * from file_t where f_jtname='G' and f_main_yn='Y') f
+      where g.g_id = f.f_jtkey(+) and g_del_yn='N' 
+      and g_name like '%'||#{keyword}||'%' and g_category=#{g_category}
+      ]]>
+      <include refid="pagingPost"/>
+    </select>
+    
+    <!-- 12.20 카테고리별 검색 개수-->
+    <select id="goodsSearchCateCount" resultType='int'>
+    	<![CDATA[
+    	select count(*) from goods_t 
+    	where g_del_yn='N' and g_name like '%'||#{keyword}||'%' and g_category=#{g_category}
+    	]]>
+    </select>
+    
+   <!-- 상품 출력 동적쿼리 -->
+   <sql id="list">
+      <![CDATA[
+      select f.f_num, g.g_id, f.f_jtkey, g.g_name, g.g_price, g.g_stock, g.g_category, g.g_sale, g.g_bestnew 
+         from goods_t g left outer join (select * from file_t where f_jtname='G') f ON g.g_id = f.f_jtkey
+         where g_del_yn='N' 
+      ]]>   
+   </sql>
+   
+    <!-- 12.15 페이징 쿼리 추가 -->
+    <sql id="pagingPre">
+      <![CDATA[
+         SELECT
+             AAA.*
+         FROM
+             (SELECT
+                 COUNT(*) OVER() AS TOTAL_COUNT,
+                 AA.*
+             FROM(
+       ]]>
+   </sql>
+   
+   <sql id="pagingPost">
+      <![CDATA[
+            )AA
+          )AAA
+         WHERE
+             (#{pageNum} -1)*#{amount} <AAA.RNUM  AND AAA.RNUM <= #{pageNum} * #{amount}
+      ]]>
+   </sql>
+   
+   <!-- 12.16 상품 정렬 -->
+   <sql id="sort">
+   		<if test="sort == null">
+            order by g_date desc
+         </if>
+         <if test="sort == 'highPrice'">
+            order by (g_price - g_price*g_sale/100) desc
+         </if>
+         <if test="sort == 'lowPrice'">
+            order by (g_price - g_price*g_sale/100) asc
+         </if>
+         <if test="sort == 'best'">
+            order by g_sold desc
+         </if>
+         <if test="sort == 'new'">
+            order by g_date desc
+         </if>   
+    </sql>
+
+    
+    
+</mapper>

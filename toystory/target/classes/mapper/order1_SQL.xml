@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+작성자 : 이은정, 김용주
+작성일 : 2022/11/25
+용도 : ordermapper 
+-->
+
+<mapper namespace="orderMapper1">
+   
+   <!-- 주문등록 -->
+   <insert id="buy" parameterType="hashmap">
+      
+      <![CDATA[
+         insert into order_t(o_num, g_id, m_num, o_option,o_count,o_price,o_tprice, o_name, o_mobile, o_tel,
+                         o_zipcode,o_address1, o_address2, o_date,o_delivery, o_dfee_yn, o_request)
+         values (order_t_seq.nextval, #{g_id}, #{m_num}, #{o_option}, #{o_count}, #{o_price}, #{o_tprice}, #{o_name}, #{o_mobile}, #{o_tel},
+               #{o_zipcode}, #{o_address1}, #{o_address2}, sysdate, '1', #{o_dfee_yn}, #{o_request})
+      ]]>
+   </insert>
+   
+   
+   <!--주문페이지 -->
+	<select id="orderStart" parameterType="hashmap"
+		resultType="hashmap">
+      <![CDATA[
+          select a.f_svname, b.g_id, b.g_name, b.g_price, c.b_count, b.g_price * c.b_count as totalprice, 
+			d.m_num, d.m_name, d.m_zipcode, d.m_address1, d.m_address2, d.m_mobile, d.m_phone, d.m_email, 
+			c.b_num , c.b_option from (select * from file_t where f_main_yn='Y' and f_jtname='G' )a  inner join goods_t b on a.f_jtkey= b.g_id inner join basket_t 
+			c on b.g_id= c.g_id inner join mem_t d on c.m_num= d.m_num where c.m_email = #{m_email}                  
+      ]]>
+		<!-- <![CDATA[ SELECT ITEM_NUM,ITEM_TYPE,ITEM_NAME,ITEM_PRICE,ITEM_DCP,ITEM_IMAGE1,ITEM_IMAGE2,ITEM_DATE,ITEM_STOCK, 
+			ITEM_PRICE-(ITEM_PRICE*(ITEM_DCP/100)) AS ITEM_FP,CART_NUM,MEM_ID,CART_CNT,OP_VALUE,ITEM_OP_PRICE 
+			FROM CART join ITEM USING(ITEM_NUM) WHERE MEM_ID=#{MEM_ID} ]]> -->
+	</select>
+   
+   <select id="selectId" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+		SELECT 
+			*
+		FROM
+			mem_t 
+		WHERE 
+			m_num = #{m_num} and
+			m_rank != 'C'
+	]]>
+	</select>
+   
+   <!-- 회원 주문리스트 -->
+   <select id="myOrderList" resultType="toystory.common.order.model.OrderModel">
+      <![CDATA[
+         select o.o_num, f.f_num, g.g_name, o.o_option, o.o_count, o.o_date, o.o_invoice, o.o_price, o.o_delivery
+         from order_t o inner join goods_t g on o.g_id= g.g_id
+               left outer join (select * from file_t where f_jtname='G') f on f.f_jtkey= g.g_id
+         where o.m_num= #{mNum}   
+      ]]>
+   </select>
+   
+   <!-- 관리자 주문 전체 리스트  -->
+   <select id="adminOrderList" resultType="toystory.common.order.model.OrderModel">
+      <![CDATA[
+         select o.o_num, o.o_date, m.m_email, '['||m.m_zipcode||'] '||m.m_address1||' '||m.m_address2 as fullAddress, g.g_name, o.o_price, o.o_option,  o.o_count, o.o_tprice, o.o_delivery
+         from order_t o inner join goods_t g on o.g_id = g.g_id
+                          inner join mem_t m on o.m_num = m.m_num      
+      ]]>
+   </select>
+   
+   <!--   관리자 주문 수정 폼-->
+   <select id="adminOrderModifyForm" resultType="toystory.common.order.model.OrderModel">
+      <![CDATA[
+         select o.o_num, o.o_invoice, o.o_name, o.o_mobile, o.o_tel, o.o_zipcode, o.o_address1, o.o_address2, f.f_num, o.o_option, o.o_count, o.o_tprice, o.o_delivery, g.g_name, o_request
+         from order_t o left outer join (select * from file_t where f_jtname='G') f 
+         on f.f_jtkey = o.g_id
+         inner join goods_t g
+         on g.g_id=o.g_id
+         where o_num=#{oNum}
+      ]]>
+   </select>
+   
+   <!--   관리자 주문 수정 처리 -->
+   <update id="adminOrderModifyPro">
+      <![CDATA[
+         update order_t
+         set o_name = #{o_name},
+             o_mobile = #{o_mobile},
+             o_tel = #{o_tel},
+             o_zipcode = #{o_zipcode},
+             o_address1 = #{o_address1},
+             o_address2 = #{o_address2},
+             o_request = #{o_request},
+             o_delivery = #{o_delivery}    
+         where o_num = #{o_num}
+      ]]>
+   </update>
+   
+</mapper>

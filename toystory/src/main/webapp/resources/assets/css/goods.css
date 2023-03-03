@@ -1,0 +1,435 @@
+@charset "UTF-8";
+/* Colors */
+:root {
+  --color-default: #212529;
+  --color-primary: #9b55d4;
+  --color-secondary: #37373f;
+  --bs-link-hover-color: #9b55d4;
+}
+
+.pagination {
+
+  --bs-pagination-active-bg: #9b55d4;
+  --bs-pagination-active-border-color: #9b55d4;
+  --bs-pagination-color : #9b55d4;
+  --bs-link-color: #9b55d4;
+ 
+}
+
+/* Fonts */
+body {
+	font-family: 'Noto Sans KR', sans-serif;
+}
+
+.breadcrumbs {
+  padding: 15px 0;
+  background: rgba(255,255,255,0.5);
+  margin-top: 50px;
+}
+
+
+
+#hero img {
+	margin-top: 180px;
+	margin-bottom: 50px;
+}
+
+/*--------------------------------------------------------------
+# Header
+--------------------------------------------------------------*/
+.header {
+  background: #fff;
+  transition: all 0.5s;
+  z-index: 997;
+  height: 180px;
+  border-bottom: 1px solid #fff;
+}
+
+@media (max-width: 575px) {
+  .header {
+    height: 70px;
+  }
+}
+
+.header .logo img {
+  max-height: 50px; 
+  margin-right: 36px;
+}
+
+.header .logo h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  font-family: var(--font-secondary);
+}
+
+.header .logo h1 span {
+  color: var(--color-primary);
+}
+
+
+/*--------------------------------------------------------------
+# 통합검색창 221128 한원
+--------------------------------------------------------------*/
+.Hsearch {
+	position: relative;
+}
+
+.Hsearch input {
+	width: 250px;
+	height: 27px;
+	margin-top: 10px;
+}
+
+.Hsearch input:focus {
+	outline: none;
+}
+
+.Hsearch button {
+	position : absolute;
+	border: none;
+	background-color: #ffffff
+}	
+
+.Hsearch img {
+	position : absolute;
+	width: 17px;
+	height: 17px;
+    margin-top: 13px;
+}
+
+
+
+/*--------------------------------------------------------------
+# Desktop Navigation
+--------------------------------------------------------------*/
+@media (min-width: 1280px) {
+  .navbar {
+    padding: 0;
+    margin-top: 140px;
+  }
+  
+  .navbar>ul>li {
+    white-space: nowrap;
+    padding: 5px 20px 20px 28px;
+  }
+  
+
+/*--------------------------------------------------------------
+# Sections & Section Header 배너부분
+--------------------------------------------------------------*/
+section {
+  overflow: hidden;
+  padding: 20;
+}
+
+
+
+/*--------------------------------------------------------------
+# 섹션 여백 221125 한원
+--------------------------------------------------------------*/
+#sec1 { 
+	padding:50;
+} 
+
+#sec1 h3 {
+	font-weight: bold;
+}
+
+/*--------------------------------------------------------------
+# 메뉴아이템 이미지 모서리 둥글게 221125 한원
+--------------------------------------------------------------*/
+.radius_img {
+    border-radius: 10%;
+    width: 350px;
+	height: 350px;
+	margin-bottom: 10px;
+}
+
+/*--------------------------------------------------------------
+# 메인페이지 상품명과 상품가격
+--------------------------------------------------------------*/
+.tab-content .menu-item {
+  -moz-text-align-last: center;
+  text-align-last: center;
+  text-align: center;
+  font-size:small;
+  font-weight: bold;
+  
+}
+
+
+
+/*--------------------------------------------------------------
+# 상품 리스트
+--------------------------------------------------------------*/
+#goods { 
+	padding:50;
+	margin-top: 190px;
+	margin-bottom: 90px;
+	text-align: center;
+} 
+
+#goods h3 {
+	font-weight: bold;
+}
+
+#goods th, td {
+	text-align: center;
+}
+
+/*--------------------------------------------------------------
+# Admin 상품 등록 & 수정 
+--------------------------------------------------------------*/
+#goodsF { 
+	padding:50;
+	margin-top: 150px;
+	margin-bottom: 150px;
+	text-align: center;
+} 
+
+#goodsF h3 {
+	font-weight: bold;
+	margin-bottom: 50px;
+}
+
+#goodsF .btn-book-a-table {
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 50px;
+  transition: 0.5s;
+  color: #fff;
+  background: var(--color-primary);
+}
+
+#goodsF tr, th, td {
+	text-align: center;
+}
+
+#goodsF #t_goodsF { 
+	padding:50;
+	margin-top: 100px;
+	margin-bottom: 150px;
+	text-align: center;
+	margin-left:auto;
+	margin-right:auto;
+	width:500px; 
+  	border-collapse: separate;
+  	border-spacing: 0 30px;
+  	font-weight: 500;
+  	font-size: 14px;
+} 
+
+
+
+/* input[type=text] {
+	width: 100%;
+	
+} */
+
+
+
+/*--------------------------------------------------------------
+# Admin 상품리스트
+--------------------------------------------------------------*/
+
+#ANbtn .btn-book-a-table {
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 50px;
+  transition: 0.5s;
+  color: #fff;
+  background: var(--color-primary);
+  margin-top:20px;
+
+}
+
+/*--------------------------------------------------------------
+# goodsDetail.jsp
+--------------------------------------------------------------*/
+
+#goodsA {
+	padding-top: 200px;
+}
+
+.btn {
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 50px;
+  transition: 0.5s;
+  color: #fff;
+  background: var(--color-primary);
+}
+
+/* 상품 문의 섹션 */
+#goodsQ {
+	text-align: center;
+}
+
+
+
+/* 상품 문의 제목 클릭시 내용 접었다 펴기 */
+.panel-faq-container {
+  margin-bottom: -16px;
+}
+.panel-faq-title {
+  color: #00eaea;
+  cursor: pointer;
+}
+.panel-faq-answer {
+  height: 0;
+  overflow: hidden;
+  /* 변화가 시작되는 쪽에다가 transition 적용해준다 0 -> 300px 
+  왜? 닫기 버튼을 누를 때 변화가 티남 */
+  transition: all 0.5s;
+}
+
+.active {
+  display: block;
+  /* 높이를 정해줘야지만 transition이 적용됨 */
+  height: 170px;
+}
+
+.detailArea {
+    padding: 0 0 0 720px;
+}
+
+.imgArea {
+	float: left;
+    position: relative;
+    margin: 0 0 0 -680px;
+}
+
+.infoArea .infohead {
+    border: 0;
+    padding: 25px 0;
+    border-top: 1px solid #000;
+    margin: 0;
+    line-height: 24px;
+    /* position: relative; */
+}
+
+.infobody {
+	padding-top: 20px;
+    line-height: 15px;
+    border-top: 1px solid #e9e9e9;
+	margin-top: 30px;
+}
+
+.p_custom {
+    color: #000;
+    margin-bottom: 28px;
+}
+
+.cell_tit {
+    display: inline-block;
+    width: 115px;
+    /* vertical-align: middle; */
+    color: #000;
+    font-weight: bold;
+    font-size: 14.5px;
+}
+
+.cell_tit2 {
+   font-size: 14.5px;
+}
+
+.opt {
+	border-top: 1px solid #e9e9e9;
+	margin-top: 30px;
+}
+
+.infoArea select {
+    border-color: #c2c2c2;
+    height: 24px;
+    font-size: 12px;
+}
+
+#buyBtn, #basket {
+    width: 41%;
+    height: 53px;
+    border: none;
+    text-align: center;
+    font-size: 14px;
+    color: #fff;
+    box-sizing: border-box;
+    letter-spacing: 0.5px;
+    background-color: #9b55d4;
+    border-radius: 50px;
+}
+   
+.pbt {
+	border: none;
+	color: #9b55d4;
+  background-color: #fff;
+}
+
+
+/*--------------------------------------------------------------
+ 굿즈 상세보기 네비게이션 버튼
+--------------------------------------------------------------*/
+.detail_tabWrap {
+	border-bottom: 1px solid #9b55d4;
+    text-align: center;
+    margin-bottom: 110px;
+    height: 40px; 
+    width: 1290px;
+}
+
+ul.tabs{
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+	text-align: center;
+}
+
+ul.tabs li{
+	background: none;
+	color: #222;
+	display: inline-block;
+	padding: 10px 15px;
+	cursor: pointer;
+	 border: 1px solid #c2c2c2;
+	 border-bottom-color: #9b55d4;
+	 width: 195px;
+    height: 40px;
+    font-size: 13.5px;
+    margin-left: -4px;
+    border-left-color: #fff;
+}
+
+ul.tabs li.current{
+	background: #ffffff;
+	color: #ffffff;
+	 border: 1px solid #9b55d4;
+	 border-bottom-color: #fff;
+}
+
+.tab-content{
+	display: none;
+	background: #fffff;
+	padding: 15px;
+}
+
+.tab-content.current{
+	display: inherit;
+}
+
+li a.current {
+	color: #9b55d4;
+}
+
+li a.noc {
+	color: #c2c2c2;
+}
+

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="euc-kr" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+"-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+  "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+ <!-- 1. 기본 템플릿 생성
+    	header, body, footer를 가진 layout.jsp라는 기본 레이아웃을 정의
+     -->
+	<definition name="main_layout" template="/WEB-INF/views/layout/layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/layout/header.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/main.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/views/layout/footer.jsp" />
+	</definition>
+	
+	
+	<definition name="goods/*" extends="main_layout">
+		<put-attribute name="body" value="/WEB-INF/views/goods/{1}.jsp"/>
+	</definition>
+	
+	
+	<definition name="member/*" extends="main_layout">
+		<put-attribute name="body" value="/WEB-INF/views/member/{1}.jsp"/>
+	</definition>
+	
+	
+   <definition name="notice/*" extends="main_layout">
+      <put-attribute name="body" value="/WEB-INF/views/notice/{1}.jsp"/>
+   </definition>
+	
+	<definition name="basket/*" extends="main_layout">
+		<put-attribute name="body" value="/WEB-INF/views/basket/{1}.jsp"/>
+	</definition>
+	
+	<definition name="basket1/*" extends="main_layout">
+		<put-attribute name="body" value="/WEB-INF/views/basket1/{1}.jsp"/>
+	</definition>
+	
+	<definition name="order/*" extends="main_layout">
+		<put-attribute name="body" value="/WEB-INF/views/order/{1}.jsp"/>
+	</definition>
+	
+	<definition name="popupView/*" extends="main_layout">
+		<put-attribute name="body" value="/WEB-INF/views/popupView/{1}.jsp"/>
+	</definition>
+	
+
+	
+	
+	
+
+
+	
+	  <!-- 관리자 페이지 -->
+   <definition name="admin_layout" template="/WEB-INF/views/layout/layout.jsp">
+      <put-attribute name="header" value="/WEB-INF/views/layout/admin_header.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/admin_main.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/layout/footer.jsp" />
+   </definition>
+   
+   
+   
+ 	<!-- admin  -->
+   <definition name="admin/*" extends="admin_layout">
+      <put-attribute name="body" value="/WEB-INF/views/admin/{1}.jsp"/>
+   </definition>
+   
+    <definition name="admin/*/*" extends="admin_layout">
+      <put-attribute name="body" value="/WEB-INF/views/admin/{1}/{2}.jsp"/>
+   </definition>
+   
+    <!-- <definition name="admin/goods/*" extends="admin_layout">
+      <put-attribute name="body" value="/WEB-INF/views/admin/goods/{1}.jsp"/>
+   </definition> -->
+  
+
+	
+</tiles-definitions>
